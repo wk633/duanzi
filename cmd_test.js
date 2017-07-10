@@ -18,8 +18,9 @@ figlet.text('Duan Zi', {
     console.log(chalk.yellow("      -- 段子:  拯救无聊时光 --"));
     console.log("\n\n");
     // get duanzi from web
-    
-    nextStep(function(){
+
+    nextStep(function(e){
+        console.log(this)
         console.log(arguments);
     })
 })

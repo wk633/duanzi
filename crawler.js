@@ -21,18 +21,12 @@ function initGet(targetUrl, callback){
             // console.log($(this).text()+"\n");
             // fs.writeFileSync('duanzi.txt', duanziStore[idx]+"\n", {flag: 'a'})
         })
-        if (duanziStore.length < 10) {
-            // get duanzi from next page
-            currentPage -= 1;
-            initGet("http://jandan.net/duan/page-"+currentPage, callback)
-        }else {
-            callback(duanziStore, currentPage)
-        }
+        callback(duanziStore, currentPage);
     })
 }
 
 function updateDuanzi(currentDuanzi, callback){
-    
+
 }
 
 module.exports = {
