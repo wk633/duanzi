@@ -1,5 +1,6 @@
 var superagent = require('superagent');
 var cheerio = require('cheerio');
+var fs = require('fs')
 
 var targetUrl = "http://jandan.net/duan";
 const duanziStore = []
@@ -22,5 +23,6 @@ superagent.get(targetUrl)
     $('.righttext + p').each(function(idx, elem){
         duanziStore[idx] = $(this).text();
         console.log($(this).text()+"\n");
+        // fs.writeFileSync('duanzi.txt', duanziStore[idx]+"\n", {flag: 'a'})
     })
 })
