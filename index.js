@@ -1,6 +1,7 @@
 #! /usr/bin/env node
 
 var targetUrl = "http://jandan.net/duan";
+// var targetUrl = "http://jandan.net/duan/page-2381"; // multiple paragraph debug
 var crawler = require('./crawler');
 var figlet = require('figlet');
 var chalk = require('chalk');
@@ -29,7 +30,7 @@ figlet.text('Duan Zi', {
 
     crawler.initGet(targetUrl, function(duanziStore, currentPage){
         pageRead.push(currentPage);
-        console.log(duanziStore.shift()+"\n\n")
+        console.log(duanziStore.shift()+"\n")
         if (duanziStore.length <= 10) {
             // update duanziStore
             console.log(chalk.bgRed("段子不够了...补货中"))
@@ -46,10 +47,12 @@ figlet.text('Duan Zi', {
 
 var duanziShow = function(duanziStore, userChoice){
     if (userChoice['userChoice'] == 'One more') {
-        console.log("\n\n" + duanziStore.shift()+"\n\n");
-    }else if (userChoice["userChoice"] == "来十个") {
-        for (var i = 0; i < 10; i++){
-            console.log("\n\n" + duanziStore.shift()+"\n\n");
+        console.log("\n" + duanziStore.shift()+"\n\n");
+    }else if (userChoice["userChoice"] == "来五个") {
+        clear();
+        console.log(chalk.yellow("\n------- 段子*5 -------\n"))
+        for (var i = 0; i < 5; i++){
+            console.log(duanziStore.shift()+"\n");
         }
     }else{
         process.exit()
@@ -63,7 +66,7 @@ function nextStepInquiry(callback){
             name: 'userChoice',
             message: "What is your next choice?",
             type: 'list',
-            choices: ["One more", "来十个", "Exit"]
+            choices: ["One more", "来五个", "Exit"]
         }
     ]
     inquirer.prompt(question).then(callback);

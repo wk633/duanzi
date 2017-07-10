@@ -1,6 +1,7 @@
 var superagent = require('superagent');
 var cheerio = require('cheerio');
 var utils = require('./util')
+var fs = require('fs')
 
 function initGet(targetUrl, callback){
     superagent.get(targetUrl)
@@ -16,11 +17,21 @@ function initGet(targetUrl, callback){
         currentPage = parseInt(currentPage.substr(1, currentPage.length-2));
 
         const duanziStore = []
-        $('.righttext + p').each(function(idx, elem){
-            duanziStore[idx] = $(this).text();
+        // $('.righttext + p').each(function(idx, elem){
+        $('.row .text').each(function(idx, elem){
+            pArray = $(elem).find("p")
+            duanziContent = ""
+            pArray.each(function(index, element){
+                duanziContent += $(element).text() + "\n"
+            })
+            duanziStore[idx] = duanziContent
+            // duanziStore[idx] = $(this).text();
+            // p = $(this)
             // console.log($(this).text()+"\n");
-            // fs.writeFileSync('duanzi.txt', duanziStore[idx]+"\n", {flag: 'a'})
+            //  fs.writeFileSync('duanzi.txt', duanziStore[idx]+"\n", {flag: 'a'})
         })
+
+
         callback(duanziStore, currentPage);
     })
 }
