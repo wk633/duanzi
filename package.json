@@ -1,11 +1,12 @@
 {
   "name": "duanzi",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "jandan duanzi",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "bin": {"duanzi": "./index.js"},
   "author": "Kai Wang",
   "license": "ISC",
   "dependencies": {
