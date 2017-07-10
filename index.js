@@ -31,7 +31,7 @@ figlet.text('Duan Zi', {
     crawler.initGet(targetUrl, function(duanziStore, currentPage){
         pageRead.push(currentPage);
         console.log(duanziStore.shift()+"\n")
-        if (duanziStore.length <= 10) {
+        if (duanziStore.length <= 5) {
             // update duanziStore
             console.log(chalk.bgRed("段子不够了...补货中"))
             console.log("\n\n")
@@ -39,8 +39,6 @@ figlet.text('Duan Zi', {
         }else {
             nextStepInquiry(duanziShow.bind(this, duanziStore))
         }
-
-
     })
 
 })
@@ -57,7 +55,13 @@ var duanziShow = function(duanziStore, userChoice){
     }else{
         process.exit()
     }
-    nextStepInquiry(duanziShow.bind(this, duanziStore))
+    if(duanziStore.length <= 5) {
+        console.log(chalk.bgRed("段子不够了...补货中"))
+        console.log("\n\n")
+        crawler.updateDuanzi(duanziStore, pageRead, nextStepInquiry, duanziShow)
+    }else {
+        nextStepInquiry(duanziShow.bind(this, duanziStore))
+    }
 }
 
 function nextStepInquiry(callback){
