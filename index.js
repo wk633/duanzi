@@ -1,5 +1,5 @@
 var targetUrl = "http://jandan.net/duan";
-var crawler = require('./crawler.js');
+var crawler = require('./crawler');
 var figlet = require('figlet');
 var chalk = require('chalk');
 var clear = require('clear');
