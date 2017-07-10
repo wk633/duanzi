@@ -47,7 +47,7 @@ figlet.text('Duan Zi', {
 
 var duanziShow = function(duanziStore, userChoice){
     if (userChoice['userChoice'] == 'One more') {
-        console.log("\n" + duanziStore.shift()+"\n\n");
+        console.log("\n" + duanziStore.shift()+"\n");
     }else if (userChoice["userChoice"] == "来五个") {
         clear();
         console.log(chalk.yellow("\n------- 段子*5 -------\n"))
