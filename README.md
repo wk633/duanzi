@@ -1,6 +1,17 @@
-# nodejs段子爬取
+# 煎蛋段子cli
+
+
+### how to install and run
 
 ```
+# install
+npm install -g duanzi
 
+# run
+duanzi
 ```
-http://www.figlet.org/examples.html
+
+### todo list
+
+- 修复段子为多个段落时只获取到第一段的
+- 过滤掉被超载鸡标记为不受欢迎的段子

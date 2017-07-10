@@ -20,6 +20,7 @@ figlet.text('Duan Zi', {
     clear();
     console.log(chalk.cyan(data));
     console.log(chalk.yellow("      -- 段子:  拯救无聊时光 --"));
+    console.log(chalk.yellow("        from jandan.net/duan"))
     console.log("\n\n");
     // get duanzi from web
     console.log('获取段子中...\n\n');
@@ -27,21 +28,15 @@ figlet.text('Duan Zi', {
     crawler.initGet(targetUrl, function(duanziStore, currentPage){
         pageRead.push(currentPage);
         console.log(duanziStore.shift()+"\n\n")
-        // if (duanziStore.length <= 10) {
-        //     // update duanziStore
-        //     //
-        // }else {
-        //     nextStepInquiry(function(){
-        //         if (arguments[0]['userChoice'] == 'One more') {
-        //             console.log("\n\n" + duanziStore.shift());
-        //         }else {
-        //             for (var i = 0; i < 10; i++){
-        //                 console.log("\n\n" + duanziStore.shift());
-        //             }
-        //         }
-        //     })
-        // }
-        nextStepInquiry(duanziShow.bind(this, duanziStore))
+        if (duanziStore.length <= 10) {
+            // update duanziStore
+            console.log(chalk.bgRed("段子不够了...补货中"))
+            console.log("\n\n")
+            crawler.updateDuanzi(duanziStore, pageRead, nextStepInquiry, duanziShow)
+        }else {
+            nextStepInquiry(duanziShow.bind(this, duanziStore))
+        }
+
 
     })
 
