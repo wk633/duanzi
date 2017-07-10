@@ -1,3 +1,5 @@
+#! /usr/bin/env node
+
 var targetUrl = "http://jandan.net/duan";
 var crawler = require('./crawler');
 var figlet = require('figlet');
