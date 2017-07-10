@@ -1,13 +1,14 @@
 {
   "name": "duanzi",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "jandan duanzi",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
   },
   "bin": {
-    "duanzi": "node ./index.js"
+    "duanzi": "./index.js"
   },
   "author": "Kai Wang",
   "license": "ISC",
@@ -31,7 +32,7 @@
     "nodejs"
   ],
   "bugs": {
-    "url": "https://github.com/KaiWang0712/duanzi/issues"
+    "url": "https://github.com/wk633/duanzi/issues"
   },
-  "homepage": "https://github.com/KaiWang0712/duanzi#readme"
+  "homepage": "https://github.com/wk633/duanzi#readme"
 }
