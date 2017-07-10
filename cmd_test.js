@@ -30,7 +30,7 @@ function nextStep(callback){
             name: 'userChoice',
             message: "What is your next choice?",
             type: 'list',
-            choices: ["One more", "Ten more"]
+            choices: ["One more", "来十个"]
         }
     ]
     inquirer.prompt(question).then(callback);

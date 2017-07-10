@@ -1,28 +1,8 @@
-var superagent = require('superagent');
-var cheerio = require('cheerio');
-var fs = require('fs')
-
 var targetUrl = "http://jandan.net/duan";
-const duanziStore = []
-var currentPage;
+var crawler = require('./crawler.js');
 
-superagent.get(targetUrl)
-.end(function(err, res){
-    if(err){
-        console.error(err);
-        return;
-    }
-    console.log('Get HTML');
-    // console.log(res.text);
+console.log('获取段子中...');
 
-    var $ = cheerio.load(res.text);
-    currentPage = $('span.current-comment-page').first().text();
-    currentPage = parseInt(currentPage.substr(1, currentPage.length-2));
-    console.log(currentPage)
-
-    $('.righttext + p').each(function(idx, elem){
-        duanziStore[idx] = $(this).text();
-        console.log($(this).text()+"\n");
-        // fs.writeFileSync('duanzi.txt', duanziStore[idx]+"\n", {flag: 'a'})
-    })
+crawler.initGet(targetUrl, function(duanziStore, currentPage){
+    console.log(currentPage);
 })
