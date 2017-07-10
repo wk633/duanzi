@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Kai Wang",
   "license": "ISC",
   "dependencies": {
     "async": "^2.5.0",
@@ -17,5 +17,18 @@
     "figlet": "^1.2.0",
     "inquirer": "^3.2.0",
     "superagent": "^3.5.2"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KaiWang0712/duanzi.git"
+  },
+  "keywords": [
+    "crawler",
+    "nodejs"
+  ],
+  "bugs": {
+    "url": "https://github.com/KaiWang0712/duanzi/issues"
+  },
+  "homepage": "https://github.com/KaiWang0712/duanzi#readme"
 }
