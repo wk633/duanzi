@@ -1,13 +1,14 @@
-var util = require('./utils');
+var utils = require('./utils');
 var crawlerPromise = require('./crawler_promise');
 var chalk = require('chalk');
 var clear = require('clear');
-var currentPage
+var cheerio = require('cheerio');
+var currentPage;
 var pageRead = []
 
 var targetUrl = "http://jandan.net/duan"
 
-util.welcomePromise()
+utils.welcomePromise()
 .then(
     (data) => {
         clear();
@@ -20,7 +21,7 @@ util.welcomePromise()
         return crawlerPromise.superagentPromise(targetUrl)
     },
     (err) => {
-        console.log("util.welcomePromise error");
+        console.log("utils.welcomePromise error");
         console.log(err)
     }
 )
@@ -28,10 +29,27 @@ util.welcomePromise()
     (response) => {
         // first time get duanzi page
         console.log(response.text)
-        console.log("get first page success")
+        console.log("get first page success");
+
+        // get maximum page
+        var $ = cheerio.load(response.text);
+        var currentPage = $('span.current-comment-page').first().text();
+        currentPage = parseInt(currentPage.substr(1, currentPage.length-2));
+        return crawlerPromise.getARandomPagePromise(currentPage, pageRead)
+
     },
     (err) => {
         console.log(err)
         console.log('crawlerPromise.superagentPromise error')
+    }
+)
+.then(
+    (data) => {
+        console.log(data.response.text)
+        console.log(data.pageRead)
+    },
+    (err) => {
+        console.log(err)
+        console.log('utils.getARandomPagePromise error')
     }
 )

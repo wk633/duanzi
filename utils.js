@@ -1,7 +1,7 @@
 var figlet = require('figlet');
 
 function genRandomPageNumber(currentPage){
-    return Math.floor(Math.random() * (currentPage - 0));
+    return Math.ceil(Math.random() * (currentPage - 0));
 }
 
 function welcomePromise(){

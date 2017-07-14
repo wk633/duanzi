@@ -1,4 +1,5 @@
-var superagent = require('superagent')
+var utils = require('./utils');
+var superagent = require('superagent');
 
 
 function superagentPromise(url){
@@ -14,6 +15,31 @@ function superagentPromise(url){
     })
 }
 
+function getARandomPagePromise(maxPageNum, pageRead) {
+    return new Promise(function(resolve, reject) {
+        // generate a random number between 1 ~ maxPageNum which is not in pageRead
+        var randomPageNum = utils.genRandomPageNumber(maxPageNum);
+        while (pageRead.indexOf(randomPageNum) != -1){
+            randomPageNum = utils.genRandomPageNumber(maxPageNum)
+        }
+        pageRead.push(randomPageNum)
+        superagentPromise("http://jandan.net/duan/page-"+randomPageNum)
+        .then(
+            (response) => {
+                resolve({
+                    response: response,
+                    pageRead: pageRead
+                });
+            },
+            (err) => {
+                console.log("superagentPromise in getARandomPagePromise error");
+                reject(err);
+            }
+        )
+    })
+}
+
 module.exports = {
-    superagentPromise: superagentPromise
+    superagentPromise: superagentPromise,
+    getARandomPagePromise: getARandomPagePromise
 }
