@@ -45,22 +45,27 @@ function basic_problem() {
 // test superagent promise encapsulation
 var superagent = require('superagent');
 
-function superagentPromise(url){
+function superagentPromise(url, info){
     return new Promise(function(resolve, reject){
         superagent.get(url)
         .end(function(err, res) {
             if (err){
                 reject(err)
             }else {
-                resolve(res, "testinfo")
+                console.log(info)
+                resolve({
+                    response: res,
+                    addinfo: 'add info'
+                })
             }
         })
     })
 }
-superagentPromise("http://jandan.net/duan/page-2381")
-.then(function(data, testinfo){
-    console.log(data.text)
-    console.log(testinfo)
+superagentPromise("http://jandan.net/duan/page-2381", 'test')
+.then(function(data){
+    // console.log(data.text)
+    console.log(data.addinfo)
 }, function(err){
     // console.log(err)
+    console.log("err")
 })
