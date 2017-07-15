@@ -1,6 +1,5 @@
-var utils = require('./utils');
 var superagent = require('superagent');
-
+var utils = require('./utils.js');
 
 function superagentPromise(url){
     return new Promise(function(resolve, reject){
@@ -16,6 +15,7 @@ function superagentPromise(url){
 }
 
 function getARandomPagePromise(maxPageNum, pageRead) {
+    var utils = require('./utils.js');
     return new Promise(function(resolve, reject) {
         // generate a random number between 1 ~ maxPageNum which is not in pageRead
         var randomPageNum = utils.genRandomPageNumber(maxPageNum);
