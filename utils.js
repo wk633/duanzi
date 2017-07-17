@@ -70,61 +70,44 @@ async function propQuestion(){
 async function duanziUpdate(originalData){
     let pageRead = originalData.pageRead
     let duanziStore = originalData.duanziStore
-    crawlerPromise.getARandomPagePromise(pageRead[0], pageRead)
-    .then(
-        (crawlerData) => {
-            return duanziExtractionPromise(crawlerData, crawlerData.pageRead)
-        },
-        (err) => {console.log(err)}
-    ).then(
-        (extractedData) => {
-            return extractedData;
-        },
-        (err) => {
-            return err;
-        }
-    )
+    return crawlerPromise.getARandomPagePromise(pageRead[0], pageRead)
 }
 
 async function commonPropQuestion(data){
+    try {
+        var userChoice = await propQuestion();
+        if (userChoice['userChoice'] == 'One more') {
+            console.log("\n" + data.duanziStore.shift()+"\n");
+            // console.log(chalk.cyan("剩余选择次数: " + (i+1) + " / 100" + "\n"))
 
-    for(var i = 0; i < 100; i++) {
-        try {
-            var userChoice = await propQuestion();
-
-            if (userChoice['userChoice'] == 'One more') {
-                console.log("\n" + data.duanziStore.shift()+"\n");
-                console.log(chalk.cyan("剩余选择次数: " + (i+1) + " / 100" + "\n"))
-
-            }else if (userChoice["userChoice"] == "来五个") {
-                clear();
-                console.log(chalk.yellow("\n------- 段子*5 -------\n"))
-                for (let i = 0; i < 5; i++){
-                    console.log(data.duanziStore.shift()+"\n");
-                }
-                console.log(chalk.cyan("剩余选择次数: " + (i+1) + " /100" + "\n"))
-            }else{
-                process.exit()
+        }else if (userChoice["userChoice"] == "来五个") {
+            clear();
+            console.log(chalk.yellow("\n------- 段子*5 -------\n"))
+            for (let i = 0; i < 5; i++){
+                console.log(data.duanziStore.shift()+"\n");
             }
-
-            if (data.duanziStore.length <= 5) {
-                console.log("\n" + chalk.bgRed("段子不够了。。。补货中") + "\n")
-                try {
-                    data = await duanziUpdate(data)
-                }catch(e){
-                    console.log(e)
-                    console.log("duanziUpdate in commonPropQuestion failed")
-                }
-
-            }
-
-        } catch(err){
-            console.log(err);
-            console.log("commonPropQuestion error");
+            // console.log(chalk.cyan("剩余选择次数: " + (i+1) + " /100" + "\n"))
+        }else{
+            process.exit()
         }
 
-    console.log("")
+        if (data.duanziStore.length <= 5) {
+            console.log("\n" + chalk.bgRed("段子不够了。。。补货中") + "\n")
+            try {
+                let randomPageRawData = await duanziUpdate(data)
+                let duanziExtracted = await duanziExtractionPromise(randomPageRawData, randomPageRawData.pageRead)
+                await commonPropQuestion(duanziExtracted)
+            }catch(e){
+                console.log(e)
+                console.log("duanziUpdate in commonPropQuestion failed")
+            }
+        }else {
+            await commonPropQuestion(data);
+        }
 
+    } catch(err){
+        console.log(err);
+        console.log("commonPropQuestion error");
     }
 
 }
