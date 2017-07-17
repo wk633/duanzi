@@ -51,7 +51,7 @@ function duanziExtractionPromise(data, pageRead){
     })
 }
 
-async function propQuestion(){
+async function propQuestion(order){
     var question = [
         {
             name: 'userChoice',
@@ -60,6 +60,9 @@ async function propQuestion(){
             choices: ["One more", "来五个", "Exit"]
         }
     ]
+    if (order == 'reverse') {
+        question[0].choices = ["来五个", "One more", "Exit"]
+    }
     return inquirer.prompt(question)
     // inquirer.prompt(question).then(function(userChoice){
     //     return userChoice;
@@ -73,14 +76,16 @@ async function duanziUpdate(originalData){
     return crawlerPromise.getARandomPagePromise(pageRead[0], pageRead)
 }
 
-async function mainloop(data){
+async function mainloop(data, order){
     try {
-        var userChoice = await propQuestion();
+        var userChoice = await propQuestion(order);
         if (userChoice['userChoice'] == 'One more') {
+            order = null;
             console.log("\n" + data.duanziStore.shift()+"\n");
             // console.log(chalk.cyan("剩余选择次数: " + (i+1) + " / 100" + "\n"))
 
         }else if (userChoice["userChoice"] == "来五个") {
+            order = 'reverse'
             clear();
             console.log(chalk.yellow("\n------- 段子*5 -------\n"))
             for (let i = 0; i < 5; i++){
@@ -96,13 +101,13 @@ async function mainloop(data){
             try {
                 let randomPageRawData = await duanziUpdate(data)
                 let duanziExtracted = await duanziExtractionPromise(randomPageRawData, randomPageRawData.pageRead)
-                await mainloop(duanziExtracted)
+                await mainloop(duanziExtracted, order)
             }catch(e){
                 console.log(e)
                 console.log("duanziUpdate in mainloop failed")
             }
         }else {
-            await mainloop(data);
+            await mainloop(data, order);
         }
 
     } catch(err){
