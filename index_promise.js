@@ -58,7 +58,7 @@ utils.welcomePromise()
 .then(
     (data) => {
         console.log(data.duanziStore.shift()+"\n");
-        utils.commonPropQuestion(data);
+        utils.mainloop(data);
     },
     (err) => {
         console.log(err);

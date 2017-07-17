@@ -73,7 +73,7 @@ async function duanziUpdate(originalData){
     return crawlerPromise.getARandomPagePromise(pageRead[0], pageRead)
 }
 
-async function commonPropQuestion(data){
+async function mainloop(data){
     try {
         var userChoice = await propQuestion();
         if (userChoice['userChoice'] == 'One more') {
@@ -96,18 +96,18 @@ async function commonPropQuestion(data){
             try {
                 let randomPageRawData = await duanziUpdate(data)
                 let duanziExtracted = await duanziExtractionPromise(randomPageRawData, randomPageRawData.pageRead)
-                await commonPropQuestion(duanziExtracted)
+                await mainloop(duanziExtracted)
             }catch(e){
                 console.log(e)
-                console.log("duanziUpdate in commonPropQuestion failed")
+                console.log("duanziUpdate in mainloop failed")
             }
         }else {
-            await commonPropQuestion(data);
+            await mainloop(data);
         }
 
     } catch(err){
         console.log(err);
-        console.log("commonPropQuestion error");
+        console.log("mainloop error");
     }
 
 }
@@ -117,5 +117,5 @@ module.exports = {
     genRandomPageNumber,
     welcomePromise,
     duanziExtractionPromise,
-    commonPropQuestion
+    mainloop
 }
