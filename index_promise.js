@@ -32,7 +32,6 @@ utils.welcomePromise()
 .then(
     (response) => {
         // first time get duanzi page
-        console.log("get first page success");
 
         // get maximum page
         var $ = cheerio.load(response.text);

@@ -28,7 +28,7 @@ function welcomePromise(){
 
 function duanziExtractionPromise(data, pageRead){
     return new Promise(function(resolve, reject){
-        content = data.response.text;
+        var content = data.response.text;
         if (content == '') {
             reject('html content is empty, something went wrong');
         }
@@ -36,8 +36,8 @@ function duanziExtractionPromise(data, pageRead){
         var $ = cheerio.load(content);
         var duanziStore = []
         $('.row .text').each(function(idx, elem){
-            pArray = $(elem).find("p")
-            duanziContent = ""
+            let pArray = $(elem).find("p")
+            let duanziContent = ""
             pArray.each(function(index, element){
                 duanziContent += $(element).text() + "\n"
             })
@@ -51,7 +51,7 @@ function duanziExtractionPromise(data, pageRead){
     })
 }
 
-function commonPropQuestion(data){
+async function propQuestion(){
     var question = [
         {
             name: 'userChoice',
@@ -60,32 +60,16 @@ function commonPropQuestion(data){
             choices: ["One more", "来五个", "Exit"]
         }
     ]
-    inquirer.prompt(question).then(function(userChoice){
-        if (userChoice['userChoice'] == 'One more') {
-            console.log("\n" + data.duanziStore.shift()+"\n");
-        }else if (userChoice["userChoice"] == "来五个") {
-            clear();
-            console.log(chalk.yellow("\n------- 段子*5 -------\n"))
-            for (var i = 0; i < 5; i++){
-                console.log(data.duanziStore.shift()+"\n");
-            }
-        }else{
-            process.exit()
-        }
+    return inquirer.prompt(question)
+    // inquirer.prompt(question).then(function(userChoice){
+    //     return userChoice;
+    // }
 
-        if (data.duanziStore.length <= 5) {
-            console.log("\n" + chalk.bgRed("段子不够了。。。补货中") + "\n")
-            duanziUpdateCallback(data, commonPropQuestion)
-        }else {
-            commonPropQuestion(data)
-        }
-
-    });
 }
 
-function duanziUpdateCallback(originalData, callback){
-    pageRead = originalData.pageRead
-    duanziStore = originalData.duanziStore
+async function duanziUpdate(originalData){
+    let pageRead = originalData.pageRead
+    let duanziStore = originalData.duanziStore
     crawlerPromise.getARandomPagePromise(pageRead[0], pageRead)
     .then(
         (crawlerData) => {
@@ -94,12 +78,55 @@ function duanziUpdateCallback(originalData, callback){
         (err) => {console.log(err)}
     ).then(
         (extractedData) => {
-            callback(extractedData)
+            return extractedData;
         },
         (err) => {
-            console.log(err)
+            return err;
         }
     )
+}
+
+async function commonPropQuestion(data){
+
+    for(var i = 0; i < 100; i++) {
+        try {
+            var userChoice = await propQuestion();
+
+            if (userChoice['userChoice'] == 'One more') {
+                console.log("\n" + data.duanziStore.shift()+"\n");
+                console.log(chalk.cyan("剩余选择次数: " + (i+1) + " / 100" + "\n"))
+
+            }else if (userChoice["userChoice"] == "来五个") {
+                clear();
+                console.log(chalk.yellow("\n------- 段子*5 -------\n"))
+                for (let i = 0; i < 5; i++){
+                    console.log(data.duanziStore.shift()+"\n");
+                }
+                console.log(chalk.cyan("剩余选择次数: " + (i+1) + " /100" + "\n"))
+            }else{
+                process.exit()
+            }
+
+            if (data.duanziStore.length <= 5) {
+                console.log("\n" + chalk.bgRed("段子不够了。。。补货中") + "\n")
+                try {
+                    data = await duanziUpdate(data)
+                }catch(e){
+                    console.log(e)
+                    console.log("duanziUpdate in commonPropQuestion failed")
+                }
+
+            }
+
+        } catch(err){
+            console.log(err);
+            console.log("commonPropQuestion error");
+        }
+
+    console.log("")
+
+    }
+
 }
 
 // console.log(genRandomPageNumber(3810))
