@@ -51,23 +51,11 @@ function duanziExtractionPromise(data, pageRead){
     })
 }
 
-async function propQuestion(order){
-    var question = [
-        {
-            name: 'userChoice',
-            message: "What is your next choice?",
-            type: 'list',
-            choices: ["One more", "来五个", "Exit"]
-        }
-    ]
-    if (order == 'reverse') {
-        question[0].choices = ["来五个", "One more", "Exit"]
-    }
-    return inquirer.prompt(question)
-    // inquirer.prompt(question).then(function(userChoice){
-    //     return userChoice;
-    // }
 
+
+
+async function propQuestion(question){
+    return inquirer.prompt(question)
 }
 
 async function duanziUpdate(originalData){
@@ -76,24 +64,34 @@ async function duanziUpdate(originalData){
     return crawlerPromise.getARandomPagePromise(pageRead[0], pageRead)
 }
 
-async function mainloop(data, order){
-    try {
-        var userChoice = await propQuestion(order);
-        if (userChoice['userChoice'] == 'One more') {
-            order = null;
-            console.log("\n" + data.duanziStore.shift()+"\n");
-            // console.log(chalk.cyan("剩余选择次数: " + (i+1) + " / 100" + "\n"))
-
-        }else if (userChoice["userChoice"] == "来五个") {
-            order = 'reverse'
-            clear();
-            console.log(chalk.yellow("\n------- 段子*5 -------\n"))
-            for (let i = 0; i < 5; i++){
-                console.log(data.duanziStore.shift()+"\n");
+async function mainloop(data, question){
+    if (question == null) {
+        question = [
+            {
+                name: 'userChoice',
+                message: "What is your next choice?",
+                type: 'list',
+                choices: ["Another One", "Another Five", "Exit"]
             }
-            // console.log(chalk.cyan("剩余选择次数: " + (i+1) + " /100" + "\n"))
-        }else{
-            process.exit()
+        ]
+    }
+    try {
+        var userChoice = await propQuestion(question);
+        switch (userChoice['userChoice']) {
+            case "Another One":
+                var nextQuestion = await oneDuanziHandle(data);
+                break;
+            case "Another Five":
+                var nextQuestion = await fiveDuanziHandle(data);
+                break;
+            case "看评论":
+                var nextQuestion = await commentViewHandle();
+                break;
+            case "Exit":
+                process.exit();
+                break;
+            default:
+                break;
         }
 
         if (data.duanziStore.length <= 5) {
@@ -101,20 +99,70 @@ async function mainloop(data, order){
             try {
                 let randomPageRawData = await duanziUpdate(data)
                 let duanziExtracted = await duanziExtractionPromise(randomPageRawData, randomPageRawData.pageRead)
-                await mainloop(duanziExtracted, order)
+                await mainloop(duanziExtracted, nextQuestion)
             }catch(e){
                 console.log(e)
                 console.log("duanziUpdate in mainloop failed")
             }
         }else {
-            await mainloop(data, order);
+            await mainloop(data, nextQuestion);
         }
 
     } catch(err){
-        console.log(err);
-        console.log("mainloop error");
+        errorHint(err, "mainloop failed")
     }
 
+}
+
+function oneDuanziHandle(data){
+    console.log("\n" + data.duanziStore.shift()+"\n");
+    return new Promise(function(resolve, reject){
+        resolve([
+            {
+                name: 'userChoice',
+                message: "What is your next choice?",
+                type: 'list',
+                choices: ["看评论","Another One", "Another Five", "Exit"]
+            }
+        ])
+    })
+}
+function fiveDuanziHandle(data){
+    clear();
+    console.log(chalk.yellow("\n------- 段子*5 -------\n"))
+    for (let i = 0; i < 5; i++){
+        console.log(data.duanziStore.shift()+"\n");
+    }
+    return new Promise(function(resolve, reject){
+        resolve([
+            {
+                name: 'userChoice',
+                message: "What is your next choice?",
+                type: 'list',
+                choices: ["Another Five", "Another One", "Exit"]
+            }
+        ])
+    })
+}
+function commentViewHandle(){
+    console.log("\ncommentViewHandle\n");
+    return new Promise(function(resolve, reject){
+        resolve([
+            {
+                name: 'userChoice',
+                message: "What is your next choice?",
+                type: 'list',
+                choices: ["Another One", "Another Five", "Exit"]
+            }
+        ])
+    })
+
+}
+function errorHint(err, info){
+    console.log(err);
+    if (info) {
+        console.log(info)
+    }
 }
 
 // console.log(genRandomPageNumber(3810))

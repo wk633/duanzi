@@ -58,7 +58,7 @@ utils.welcomePromise()
 .then(
     (data) => {
         console.log(data.duanziStore.shift()+"\n");
-        utils.mainloop(data, null);
+        utils.mainloop(data);
     },
     (err) => {
         console.log(err);
