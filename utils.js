@@ -99,13 +99,21 @@ async function mainloop(data, question){
             try {
                 let randomPageRawData = await duanziUpdate(data)
                 let duanziExtracted = await duanziExtractionPromise(randomPageRawData, randomPageRawData.pageRead)
-                await mainloop(duanziExtracted, nextQuestion)
+                try {
+                    await mainloop(duanziExtracted, nextQuestion)
+                }catch(e){
+                    errorHint(e, "try to enter another mainloop failed");
+                }
             }catch(e){
-                console.log(e)
-                console.log("duanziUpdate in mainloop failed")
+                errorHint(e, "duanziUpdate or duanziextraction in mainloop failed")
             }
         }else {
-            await mainloop(data, nextQuestion);
+            try {
+                await mainloop(data, nextQuestion);
+            }catch(e){
+                errorHint(e, "try to enter another mainloop failed");
+            }
+
         }
 
     } catch(err){
