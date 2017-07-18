@@ -7,6 +7,9 @@
 # install
 npm install -g duanzi
 
+# update
+npm update -g duanzi
+
 # run
 duanzi
 ```
