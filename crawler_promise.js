@@ -39,6 +39,28 @@ function getARandomPagePromise(maxPageNum, pageRead) {
     })
 }
 
+function commentGetPromise(num) {
+    return new Promise(function(resolve, reject){
+        superagentPromise("http://jandan.net/tucao/"+num)
+        .then(
+            (response) => {
+                // console.log(response.text)
+                responseJson = JSON.parse(response.text)
+                if (responseJson.code != '0'){
+                    reject("response error")
+                }else {
+                    var hotTucao = responseJson['hot_tucao'];
+                    if (hotTucao.length < 6) {
+                        hotTucao = hotTucao.concat(...responseJson.tucao)
+                    }
+                    hotTucao = hotTucao.slice(0,6);
+                }
+                resolve(hotTucao)
+            }
+        )
+    })
+}
+
 module.exports = {
     superagentPromise: superagentPromise,
     getARandomPagePromise: getARandomPagePromise
