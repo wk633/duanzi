@@ -324,7 +324,7 @@ function commentViewHandle(lastId) {
                 for (var i = 0; i < hotTucao.length; i++) {
                     var tmpTucao = hotTucao[i];
                     // console.log(tmpTucao["comment_date"]);
-                    console.log(chalk.yellow(tmpTucao["comment_content"].replace(/<a.*?\/a>/, "").trim() + "\n"));
+                    console.log(chalk.yellow(tmpTucao["comment_content"].replace(/<a.*\/a>/, "").replace(/<br \/>/g, "").replace(/&quot;/g, '"').trim() + "\n"));
                 }
             }
 

@@ -19,6 +19,8 @@ function getARandomPagePromise(maxPageNum, pageRead) {
         // generate a random number between 1 ~ maxPageNum which is not in pageRead
         var randomPageNum = utils.genRandomPageNumber(maxPageNum);
         // randomPageNum = 2231; // 2231 page to help debug comment contains <a>@name</a>
+        // randomPageNum = 2338; // 2338 to help debug several <a>@name</a>,  &quot; <br />
+
         while (pageRead.indexOf(randomPageNum) != -1){
             randomPageNum = utils.genRandomPageNumber(maxPageNum)
         }
