@@ -64,7 +64,7 @@ utils.welcomePromise()
                 name: 'userChoice',
                 message: "What is your next choice?",
                 type: 'list',
-                choices: ["看评论","Another One", "Another Five", "Exit"]
+                choices: ["Another One", "看评论", "Another Five", "Exit"]
             }
         ];
         utils.mainloop(data,  question, firstDuanziData["duanziId"]);

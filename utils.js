@@ -6,7 +6,7 @@ var clear = require('clear');
 var chalk = require('chalk');
 
 function genRandomPageNumber(currentPage){
-    var base = currentPage - 200;
+    var base = currentPage - 100;
     return Math.ceil(Math.random() * (currentPage - base))+base;
 }
 
@@ -159,7 +159,7 @@ function oneDuanziHandle(data){
                     name: 'userChoice',
                     message: "What is your next choice?",
                     type: 'list',
-                    choices: ["看评论","Another One", "Another Five", "Exit"]
+                    choices: ["Another One", "看评论", "Another Five", "Exit"]
                 }
             ],
             "duanziId": tmp["duanziId"]
@@ -191,12 +191,12 @@ function commentViewHandle(lastId){
             (hotTucao)=>{
                 console.log("");
                 if (hotTucao.length == 0){
-                    console.log("没有吐槽。。"+"\n");
+                    console.log(chalk.yellow("> 没有吐槽。。")+"\n");
                 }else{
                     for(let i = 0; i < hotTucao.length; i++){
                         let tmpTucao = hotTucao[i];
-                        console.log(tmpTucao["comment_date"]);
-                        console.log(tmpTucao["comment_content"]+"\n");
+                        // console.log(tmpTucao["comment_date"]);
+                        console.log(chalk.yellow(tmpTucao["comment_content"].replace(/<a.*?\/a>/, "").trim()+"\n"));
                     }
                 }
 
