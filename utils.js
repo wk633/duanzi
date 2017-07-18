@@ -36,18 +36,28 @@ function duanziExtractionPromise(data, pageRead){
         pageRead = data.pageRead;
         var $ = cheerio.load(content);
         var duanziStore = []
-        $('.row .text').each(function(idx, elem){
-            let duanziId = $(elem).find(".righttext a").text()
-            let pArray = $(elem).find("p")
-            let duanziContent = ""
-            pArray.each(function(index, element){
-                duanziContent += $(element).text() + "\n"
-            })
-            duanziStore[idx] = {
-                duanziId,
-                duanziContent
+
+        $('.commentlist li').each(function(idx, elem) {
+            let commentLike = parseInt($(elem).find('.tucao-like-container span').text());
+            let commentUnlike = parseInt($(elem).find('.tucao-unlike-container span').text());
+            if (commentUnlike+ commentLike >= 50 && (commentLike / commentUnlike) < 0.618){
+                // bad duanzi
+            }else {
+                let duanziId = $(elem).find(".righttext a").text()
+                let pArray = $(elem).find("p")
+                let duanziContent = ""
+                pArray.each(function(index, element){
+                    duanziContent += $(element).text() + "\n"
+                })
+                duanziStore.push({
+                    duanziId,
+                    duanziContent,
+                    commentLike,
+                    commentUnlike
+                })
             }
         })
+
         resolve({
             duanziStore,
             pageRead
