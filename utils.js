@@ -36,12 +36,16 @@ function duanziExtractionPromise(data, pageRead){
         var $ = cheerio.load(content);
         var duanziStore = []
         $('.row .text').each(function(idx, elem){
+            let duanziId = $(elem).find(".righttext a").text()
             let pArray = $(elem).find("p")
             let duanziContent = ""
             pArray.each(function(index, element){
                 duanziContent += $(element).text() + "\n"
             })
-            duanziStore[idx] = duanziContent;
+            duanziStore[idx] = {
+                duanziId,
+                duanziContent
+            }
         })
         resolve({
             duanziStore,
@@ -123,7 +127,8 @@ async function mainloop(data, question){
 }
 
 function oneDuanziHandle(data){
-    console.log("\n" + data.duanziStore.shift()+"\n");
+    var tmp = data.duanziStore.shift();
+    console.log("\n" + tmp['duanziContent'] +"\n");
     return new Promise(function(resolve, reject){
         resolve([
             {
@@ -139,7 +144,8 @@ function fiveDuanziHandle(data){
     clear();
     console.log(chalk.yellow("\n------- 段子*5 -------\n"))
     for (let i = 0; i < 5; i++){
-        console.log(data.duanziStore.shift()+"\n");
+        var tmp = data.duanziStore.shift();
+        console.log(tmp['duanziContent']+"\n");
     }
     return new Promise(function(resolve, reject){
         resolve([
