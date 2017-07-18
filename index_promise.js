@@ -1,4 +1,7 @@
-var utils = require('./utils');
+#! /usr/bin/env node
+
+require('babel-polyfill');
+var utils = require('./utils_compiled.js');
 var crawlerPromise = require('./crawler_promise');
 var chalk = require('chalk');
 var clear = require('clear');
