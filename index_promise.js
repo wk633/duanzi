@@ -57,8 +57,17 @@ utils.welcomePromise()
 )
 .then(
     (data) => {
-        console.log(data.duanziStore.shift()['duanziContent']+"\n");
-        utils.mainloop(data);
+        var firstDuanziData = data.duanziStore.shift()
+        console.log(firstDuanziData['duanziContent']+"\n");
+        var question = [
+            {
+                name: 'userChoice',
+                message: "What is your next choice?",
+                type: 'list',
+                choices: ["看评论","Another One", "Another Five", "Exit"]
+            }
+        ];
+        utils.mainloop(data,  question, firstDuanziData["duanziId"]);
     },
     (err) => {
         console.log(err);

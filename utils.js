@@ -179,6 +179,7 @@ function commentViewHandle(lastId){
         crawlerPromise.commentGetPromise(lastId)
         .then(
             (hotTucao)=>{
+                console.log("");
                 if (hotTucao.length == 0){
                     console.log("没有吐槽。。"+"\n");
                 }else{
