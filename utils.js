@@ -6,7 +6,8 @@ var clear = require('clear');
 var chalk = require('chalk');
 
 function genRandomPageNumber(currentPage){
-    return Math.ceil(Math.random() * (currentPage - 0));
+    var base = currentPage - 200;
+    return Math.ceil(Math.random() * (currentPage - base))+base;
 }
 
 function welcomePromise(){
@@ -68,7 +69,7 @@ async function duanziUpdate(originalData){
     return crawlerPromise.getARandomPagePromise(pageRead[0], pageRead)
 }
 
-async function mainloop(data, question){
+async function mainloop(data, question, lastId){
     if (question == null) {
         question = [
             {
@@ -83,13 +84,15 @@ async function mainloop(data, question){
         var userChoice = await propQuestion(question);
         switch (userChoice['userChoice']) {
             case "Another One":
-                var nextQuestion = await oneDuanziHandle(data);
+                var oneDuanziReturn = await oneDuanziHandle(data);
+                var nextQuestion = oneDuanziReturn['nextQuestion'];
+                var duanziId = oneDuanziReturn['duanziId'];
                 break;
             case "Another Five":
                 var nextQuestion = await fiveDuanziHandle(data);
                 break;
             case "看评论":
-                var nextQuestion = await commentViewHandle();
+                var nextQuestion = await commentViewHandle(lastId);
                 break;
             case "Exit":
                 process.exit();
@@ -98,13 +101,19 @@ async function mainloop(data, question){
                 break;
         }
 
+
         if (data.duanziStore.length <= 5) {
             console.log("\n" + chalk.bgRed("段子不够了。。。补货中") + "\n")
             try {
                 let randomPageRawData = await duanziUpdate(data)
-                let duanziExtracted = await duanziExtractionPromise(randomPageRawData, randomPageRawData.pageRead)
+                var duanziExtracted = await duanziExtractionPromise(randomPageRawData, randomPageRawData.pageRead)
                 try {
-                    await mainloop(duanziExtracted, nextQuestion)
+                    if (userChoice['userChoice'] == "Another One") {
+                        await mainloop(duanziExtracted, nextQuestion, duanziId)
+                    }else {
+                        await mainloop(duanziExtracted, nextQuestion)
+                    }
+
                 }catch(e){
                     errorHint(e, "try to enter another mainloop failed");
                 }
@@ -113,7 +122,11 @@ async function mainloop(data, question){
             }
         }else {
             try {
-                await mainloop(data, nextQuestion);
+                if (userChoice['userChoice'] == "Another One") {
+                    await mainloop(data, nextQuestion, duanziId)
+                }else {
+                    await mainloop(data, nextQuestion)
+                }
             }catch(e){
                 errorHint(e, "try to enter another mainloop failed");
             }
@@ -130,14 +143,17 @@ function oneDuanziHandle(data){
     var tmp = data.duanziStore.shift();
     console.log("\n" + tmp['duanziContent'] +"\n");
     return new Promise(function(resolve, reject){
-        resolve([
-            {
-                name: 'userChoice',
-                message: "What is your next choice?",
-                type: 'list',
-                choices: ["看评论","Another One", "Another Five", "Exit"]
-            }
-        ])
+        resolve({
+            "nextQuestion": [
+                {
+                    name: 'userChoice',
+                    message: "What is your next choice?",
+                    type: 'list',
+                    choices: ["看评论","Another One", "Another Five", "Exit"]
+                }
+            ],
+            "duanziId": tmp["duanziId"]
+        })
     })
 }
 function fiveDuanziHandle(data){
@@ -158,17 +174,35 @@ function fiveDuanziHandle(data){
         ])
     })
 }
-function commentViewHandle(){
-    console.log("\ncommentViewHandle\n");
+function commentViewHandle(lastId){
     return new Promise(function(resolve, reject){
-        resolve([
-            {
-                name: 'userChoice',
-                message: "What is your next choice?",
-                type: 'list',
-                choices: ["Another One", "Another Five", "Exit"]
+        crawlerPromise.commentGetPromise(lastId)
+        .then(
+            (hotTucao)=>{
+                if (hotTucao.length == 0){
+                    console.log("没有吐槽。。"+"\n");
+                }else{
+                    for(let i = 0; i < hotTucao.length; i++){
+                        let tmpTucao = hotTucao[i];
+                        console.log(tmpTucao["comment_date"]);
+                        console.log(tmpTucao["comment_content"]+"\n");
+                    }
+                }
+
+                resolve([
+                    {
+                        name: 'userChoice',
+                        message: "What is your next choice?",
+                        type: 'list',
+                        choices: ["Another One", "Another Five", "Exit"]
+                    }
+                ])
+            },
+            (err) => {
+                errorHint(err, "crawlerPromise.commentGetPromise reject err")
+                reject(err);
             }
-        ])
+        )
     })
 
 }

@@ -45,7 +45,7 @@ function commentGetPromise(num) {
         .then(
             (response) => {
                 // console.log(response.text)
-                responseJson = JSON.parse(response.text)
+                let responseJson = JSON.parse(response.text)
                 if (responseJson.code != '0'){
                     reject("response error")
                 }else {
@@ -63,5 +63,6 @@ function commentGetPromise(num) {
 
 module.exports = {
     superagentPromise: superagentPromise,
-    getARandomPagePromise: getARandomPagePromise
+    getARandomPagePromise: getARandomPagePromise,
+    commentGetPromise: commentGetPromise
 }
